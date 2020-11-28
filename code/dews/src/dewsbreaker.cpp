@@ -147,6 +147,71 @@ bool DewsBreaker::unpack_uint64(DEWS_OUT uint64_t& value)
 }
 
 /**
+ put a string into buffer
+ dew format:
+           -----------------  ------------- -------------     -------------
+           |  Pack  Header |  |   Char1   | |   Char2   |     |   CharN   |
+ LEN < 15  | 0 ~ 3 | 4 ~ 7 |  |   0 ~ 7   | |   0 ~ 7   | ... |   0 ~ 7   |
+           |  DHT  |  LEN  |  |    VAL    | |    VAL    |     |    VAL    |
+           -----------------  ------------- -------------     -------------
+ or 
+           ----------------- ---------------------- ------------- -------------     -------------
+           |  Pack  Header | |  LEN : Dew-UInt32  | |   Char1   | |   Char2   |     |   CharN   |
+ LEN >=15  | 0 ~ 3 | 4 ~ 7 | |     0 ~ Variable   | |   0 ~ 7   | |   0 ~ 7   | ... |   0 ~ 7   |
+           |  DHT  |  LEN  | |        VAL         | |    VAL    | |    VAL    |     |    VAL    |
+           ----------------- ---------------------- ------------- -------------     -------------
+ */
+bool DewsBreaker::unpack_string(DEWS_OUT std::string& value)
+{
+    bool retval = true;
+
+    const uint8_t* cur = _dews.data(_index);
+    uint8_t header = *cur;
+    ++cur;  ++_index;
+
+    int dht = header & 0xf0;
+    if (dht == DHT_String)
+    {
+        int len = header & 0x0f;
+
+        if (len > 14)
+        {
+            uint32_t real_len;
+            if (unpack_uint32(real_len))
+            {
+                value.clear();
+                value.insert(
+                    value.end(),
+                    (const char*)_dews.data(_index),
+                    (const char*)_dews.data(_index + real_len));
+                _index += real_len;
+            }
+            else
+            {
+                retval = false;
+            }
+        }
+        else if (len > 0)
+        { // len > 0 && len < 15
+            value.clear();
+            value.insert(value.end(), (const char*)_dews.data(_index), (const char*)_dews.data(_index + len));
+            _index += len;
+        }
+        else
+        { // len == 0
+            value.clear();
+        }
+    }
+    else
+    {
+        retval = false;
+    }
+
+    return retval;
+}
+
+
+/**
  unpack an 8-bit integer from buffer
  dew format:
  -----------------  -------------

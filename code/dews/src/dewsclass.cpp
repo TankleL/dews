@@ -20,7 +20,7 @@ Dews::Dews(const Dews& rhs)
     mybuf = otherbuf;
 }
 
-Dews::Dews(Dews&& rhs)
+Dews::Dews(Dews&& rhs) noexcept
     : _buffer(nullptr)
 {
     _buffer = rhs._buffer;
@@ -54,6 +54,12 @@ void Dews::push(uint8_t value)
 {
     std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
     mybuf.push_back(value);
+}
+
+void Dews::push(const uint8_t* begin, const uint8_t* end)
+{
+    std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
+    mybuf.insert(mybuf.end(), begin, end);
 }
 
 const uint8_t* Dews::data() const

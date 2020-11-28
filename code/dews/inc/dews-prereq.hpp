@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include <cstdint>
+#include <cassert>
 
 #ifdef WIN32
 #	ifdef API_DEV_MOD

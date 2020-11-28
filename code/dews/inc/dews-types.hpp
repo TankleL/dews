@@ -19,7 +19,7 @@ namespace dews
         DHT_Double = 0xa0,
 
         DHT_Boolean = 0xb0,
-        DHT_Array = 0xc0,
+        DHT_String = 0xc0,
 
         // <-------------- add new types here
 

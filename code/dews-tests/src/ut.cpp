@@ -13,6 +13,8 @@ void test_uint16_encode_decode();
 void test_uint32_encode_decode();
 void test_uint64_encode_decode();
 
+void test_string_encode_decode();
+
 int main(int argc, char** argv)
 {
     test_int8_encode_decode();
@@ -24,6 +26,9 @@ int main(int argc, char** argv)
     test_uint16_encode_decode();
     test_uint32_encode_decode();
     test_uint64_encode_decode();
+
+    test_string_encode_decode();
+
     return 0;
 }
 
@@ -425,6 +430,32 @@ void test_uint64_encode_decode()
 
     assert(dr.unpack_uint64(val));
     assert(val == 18446744073709551615);
+}
+
+void test_string_encode_decode()
+{
+    DewsBuilder db;
+
+    db.pack_string("Hello!");
+    db.pack_string("This is a dews string packing test.");
+    db.pack_string("");
+    db.pack_string("Before me there's just an empty string get packed.");
+
+    Dews ds; db.getdews(ds);
+    DewsBreaker dr; dr.setdews(std::move(ds));
+
+    std::string value;
+    assert(dr.unpack_string(value));
+    assert(value == "Hello!");
+
+    assert(dr.unpack_string(value));
+    assert(value == "This is a dews string packing test.");
+
+    assert(dr.unpack_string(value));
+    assert(value == "");
+
+    assert(dr.unpack_string(value));
+    assert(value == "Before me there's just an empty string get packed.");
 }
 
 

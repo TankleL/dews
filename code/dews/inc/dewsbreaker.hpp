@@ -24,6 +24,8 @@ namespace dews
         bool unpack_uint32(DEWS_OUT uint32_t& value);
         bool unpack_uint64(DEWS_OUT uint64_t& value);
 
+        bool unpack_string(DEWS_OUT std::string& value);
+
     public:
         bool is_eod() const;
 

@@ -71,34 +71,42 @@ DewsBuilder& DewsBuilder::pack_uint64(DEWS_IN uint64_t value)
     _internal_impls::dews_pack_uint64(_dews, value, DHT_UInt64);
     return *this;
 }
+
 /**
  put a string into buffer
- string length can only be one of below::wcerr
-   0) 0 bytes
-   1) 8 bytes
-   2) 16 bytes
-   3) 32 bytes
-   4) 32 * 2 bytes
-   5) 32 * 3 bytes
-   6) 32 * 4 bytes
-   7) 32 * 5 bytes
-   8) 32 * 6 bytes
-   9) 32 * 7 bytes
-   a) 32 * 8 bytes
-   b) 32 * 9 bytes
-   c) 32 * 10 bytes
-   d) 32 * 11 bytes
-   e) 32 * 12 bytes
-   f) any length that is more than 32 * 12 (384) bytes
  dew format:
- -----------------  -------------
- |  Pack  Header |  |   Value   |
- | 0 ~ 3 | 4 ~ 7 |  |   0 ~ 7   |
- |  DHT  |  LEN  |  |    VAL    |
- -----------------  -------------
+           -----------------  ------------- -------------     -------------
+           |  Pack  Header |  |   Char1   | |   Char2   |     |   CharN   |
+ LEN < 15  | 0 ~ 3 | 4 ~ 7 |  |   0 ~ 7   | |   0 ~ 7   | ... |   0 ~ 7   |
+           |  DHT  |  LEN  |  |    VAL    | |    VAL    |     |    VAL    |
+           -----------------  ------------- -------------     -------------
+ or 
+           ----------------- ---------------------- ------------- -------------     -------------
+           |  Pack  Header | |  LEN : Dew-UInt32  | |   Char1   | |   Char2   |     |   CharN   |
+ LEN >=15  | 0 ~ 3 | 4 ~ 7 | |     0 ~ Variable   | |   0 ~ 7   | |   0 ~ 7   | ... |   0 ~ 7   |
+           |  DHT  |  LEN  | |        VAL         | |    VAL    | |    VAL    |     |    VAL    |
+           ----------------- ---------------------- ------------- -------------     -------------
  */
 DewsBuilder& DewsBuilder::pack_string(DEWS_IN const std::string& value)
 {
+    const size_t LEN = value.length();
+    assert(LEN <= std::numeric_limits<uint32_t>::max());
+
+    if (LEN > 14)
+    { // len >= 15
+        _dews.push(DHT_String | 0x0f);
+        pack_uint32((uint32_t)LEN); 
+        _dews.push((const uint8_t*)value.data(), (const uint8_t*)value.data() + LEN);
+    }
+    else if (LEN > 0)
+    { // len < 15 && len > 0
+        _dews.push(DHT_String | (uint8_t)LEN);
+        _dews.push((const uint8_t*)value.data(), (const uint8_t*)value.data() + LEN);
+    }
+    else
+    { // len == 0
+        _dews.push(DHT_String); // DHT_String | 0x00
+    }
 
     return *this;
 }

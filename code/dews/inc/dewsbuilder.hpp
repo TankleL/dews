@@ -31,9 +31,6 @@ namespace dews
 
         DewsBuilder& pack_string(DEWS_IN const std::string& value);
 
-        DewsBuilder& pack_array_begin();
-        DewsBuilder& pack_array_end();
-
         bool getdews(DEWS_OUT Dews& dews);
 
     private:

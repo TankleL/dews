@@ -8,7 +8,7 @@ namespace dews
     public:
         Dews();
         Dews(const Dews& rhs);
-        Dews(Dews&& rhs);
+        Dews(Dews&& rhs) noexcept;
         ~Dews();
 
     public:
@@ -17,6 +17,7 @@ namespace dews
 
     public:
         void push(uint8_t value);
+        void push(const uint8_t* begin, const uint8_t* end);
         const uint8_t* data() const;
         const uint8_t* data(size_t index) const;
         const size_t length() const;
