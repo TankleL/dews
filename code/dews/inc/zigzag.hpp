@@ -3,11 +3,7 @@
 namespace dews
 {
 
-    inline uint8_t i8_to_zz(int8_t value)
-    {
-        return (value << 1) ^ (value >> 7);
-    }
-
+    // signed to zigzagged
     inline uint16_t i16_to_zz(int16_t value)
     {
         return (value << 1) ^ (value >> 15);
@@ -23,9 +19,20 @@ namespace dews
         return (value << 1) ^ (value >> 63);
     }
 
+    // zigzagged to signed
+    inline int32_t zz_to_i16(uint16_t value)
+    {
+        return (int16_t)((value >> 1) ^ -(int16_t)(value & 1));
+    }
+
     inline int32_t zz_to_i32(uint32_t value)
     {
         return (int32_t)((value >> 1) ^ -(int32_t)(value & 1));
+    }
+
+    inline int64_t zz_to_i64(uint64_t value)
+    {
+        return (int64_t)((value >> 1) ^ -(int64_t)(value & 1));
     }
 
 }
