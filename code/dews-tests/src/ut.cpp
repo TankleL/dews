@@ -32,7 +32,7 @@ void test_int32_encode_decode()
     db.pack_int32(-2147287038);
 
     Dews ds;
-    db.get_dews(ds);
+    db.getdews(ds);
 
     DewsBreaker dr;
     dr.setdews(std::move(ds));
@@ -93,7 +93,7 @@ void test_uint32_encode_decode()
     db.pack_uint32(35915844);
 
     Dews ds;
-    db.get_dews(ds);
+    db.getdews(ds);
 
     DewsBreaker dr;
     dr.setdews(std::move(ds));

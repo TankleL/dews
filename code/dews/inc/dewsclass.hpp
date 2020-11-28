@@ -19,6 +19,7 @@ namespace dews
         void push(uint8_t value);
         const uint8_t* data() const;
         const uint8_t* data(size_t index) const;
+        const size_t length() const;
 
     public:
         void reset();

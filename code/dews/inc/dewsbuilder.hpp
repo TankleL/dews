@@ -24,7 +24,7 @@ namespace dews
         DewsBuilder& pack_array_begin();
         DewsBuilder& pack_array_end();
 
-        bool get_dews(DEWS_OUT Dews& dews);
+        bool getdews(DEWS_OUT Dews& dews);
 
     private:
         Dews            _dews;

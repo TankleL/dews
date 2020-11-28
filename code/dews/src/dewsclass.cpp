@@ -68,6 +68,12 @@ const uint8_t* Dews::data(size_t index) const
     return mybuf.data() + index;
 }
 
+const size_t Dews::length() const
+{
+    std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
+    return mybuf.size();
+}
+
 void Dews::reset()
 {
     delete _buffer;

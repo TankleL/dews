@@ -42,7 +42,7 @@ DewsBuilder& DewsBuilder::pack_uint32(DEWS_IN uint32_t value)
     return *this;
 }
 
-bool DewsBuilder::get_dews(DEWS_OUT Dews& dews)
+bool DewsBuilder::getdews(DEWS_OUT Dews& dews)
 {
     bool retval = true;
 

@@ -32,6 +32,11 @@ void DewsBreaker::getdews(DEWS_OUT Dews& dews)
     dews = std::move(_dews);
 }
 
+bool DewsBreaker::is_eod() const
+{
+    return _index < _dews.length();
+}
+
 /**
  unpack an 32-bit integer from buffer
  dew format:
