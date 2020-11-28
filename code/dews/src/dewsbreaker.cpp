@@ -173,13 +173,18 @@ bool dews::_internal_impls::dews_unpack_uint8(
     {
         int len = header & 0x0f;
         
-        if (len == 1)
+        switch (len)
         {
+        case 0:
+            value = 0;
+            break;
+
+        case 1:
             value = *cur;
             ++cur; ++index;
-        }
-        else
-        {
+            break;
+
+        default:
             retval = false;
         }
     }
@@ -221,6 +226,10 @@ bool dews::_internal_impls::dews_unpack_uint16(
         
         switch (len)
         {
+        case 0:
+            value = 0;
+            break;
+
         case 1:
             value = (uint16_t)*cur;
             ++cur; ++index;
@@ -276,6 +285,10 @@ bool dews::_internal_impls::dews_unpack_uint32(
         
         switch(len)
         {
+        case 0:
+            value = 0;
+            break;
+
         case 1:
             value = (uint32_t)*cur;
             ++cur; ++index;
@@ -356,6 +369,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
         
         switch (len)
         {
+        case 0:
+            value = 0;
+            break;
 
         case 1:
             value = (uint64_t)*cur;

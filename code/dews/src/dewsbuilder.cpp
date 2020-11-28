@@ -71,6 +71,37 @@ DewsBuilder& DewsBuilder::pack_uint64(DEWS_IN uint64_t value)
     _internal_impls::dews_pack_uint64(_dews, value, DHT_UInt64);
     return *this;
 }
+/**
+ put a string into buffer
+ string length can only be one of below::wcerr
+   0) 0 bytes
+   1) 8 bytes
+   2) 16 bytes
+   3) 32 bytes
+   4) 32 * 2 bytes
+   5) 32 * 3 bytes
+   6) 32 * 4 bytes
+   7) 32 * 5 bytes
+   8) 32 * 6 bytes
+   9) 32 * 7 bytes
+   a) 32 * 8 bytes
+   b) 32 * 9 bytes
+   c) 32 * 10 bytes
+   d) 32 * 11 bytes
+   e) 32 * 12 bytes
+   f) any length that is more than 32 * 12 (384) bytes
+ dew format:
+ -----------------  -------------
+ |  Pack  Header |  |   Value   |
+ | 0 ~ 3 | 4 ~ 7 |  |   0 ~ 7   |
+ |  DHT  |  LEN  |  |    VAL    |
+ -----------------  -------------
+ */
+DewsBuilder& DewsBuilder::pack_string(DEWS_IN const std::string& value)
+{
+
+    return *this;
+}
 
 bool DewsBuilder::getdews(DEWS_OUT Dews& dews)
 {
@@ -103,9 +134,17 @@ bool DewsBuilder::getdews(DEWS_OUT Dews& dews)
  */
 void dews::_internal_impls::dews_pack_uint8(DEWS_REF Dews& dews, DEWS_IN uint8_t value, DEWS_IN DewsHeaderTypes dht)
 {
-    uint8_t header = dht | 0x01;
-    dews.push(header);
-    dews.push(value);
+    if (value > 0)
+    { // LEN == 1
+        uint8_t header = dht | 0x01;
+        dews.push(header);
+        dews.push(value);
+    }
+    else
+    { // LEN == 0
+        uint8_t header = dht; // dht | 0x00
+        dews.push(header);
+    }
 }
 
 /**
@@ -119,7 +158,12 @@ void dews::_internal_impls::dews_pack_uint8(DEWS_REF Dews& dews, DEWS_IN uint8_t
  */
 void dews::_internal_impls::dews_pack_uint16(DEWS_REF Dews& dews, DEWS_IN uint16_t value, DEWS_IN DewsHeaderTypes dht)
 {
-    if (value < 0x100)
+    if (value == 0)
+    { // LEN == 0
+        uint8_t header = dht; // dht | 0x00
+        dews.push(header);
+    }
+    else if (value < 0x100)
     { // LEN == 1
     uint8_t header = dht | 0x01;
     dews.push(header);
@@ -146,7 +190,12 @@ void dews::_internal_impls::dews_pack_uint16(DEWS_REF Dews& dews, DEWS_IN uint16
  */
 void dews::_internal_impls::dews_pack_uint32(DEWS_REF Dews& dews, DEWS_IN uint32_t value, DEWS_IN DewsHeaderTypes dht)
 {
-    if (value < 0x100)
+    if (value == 0)
+    { // LEN == 0
+        uint8_t header = dht; // dht | 0x00
+        dews.push(header);
+    }
+    else if (value < 0x100)
     { // LEN == 1
         uint8_t header = dht | 0x01;
         dews.push(header);
@@ -189,7 +238,12 @@ void dews::_internal_impls::dews_pack_uint32(DEWS_REF Dews& dews, DEWS_IN uint32
  */
 void dews::_internal_impls::dews_pack_uint64(DEWS_REF Dews & dews, DEWS_IN uint64_t value, DEWS_IN DewsHeaderTypes dht)
 {
-    if (value < 0x100)
+    if (value == 0)
+    { // LEN == 0
+        uint8_t header = dht; // dht | 0x00
+        dews.push(header);
+    }
+    else if (value < 0x100)
     { // LEN == 1
         uint8_t header = dht | 0x01;
         dews.push(header);

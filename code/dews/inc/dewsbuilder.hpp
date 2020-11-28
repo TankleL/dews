@@ -29,7 +29,7 @@ namespace dews
         DewsBuilder& pack_uint32(DEWS_IN uint32_t value);
         DewsBuilder& pack_uint64(DEWS_IN uint64_t value);
 
-        DewsBuilder& pack_string();
+        DewsBuilder& pack_string(DEWS_IN const std::string& value);
 
         DewsBuilder& pack_array_begin();
         DewsBuilder& pack_array_end();
