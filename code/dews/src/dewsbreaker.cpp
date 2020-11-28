@@ -219,21 +219,22 @@ bool dews::_internal_impls::dews_unpack_uint16(
     {
         int len = header & 0x0f;
         
-        if (len == 1)
+        switch (len)
         {
+        case 1:
             value = (uint16_t)*cur;
             ++cur; ++index;
-        }
-        else if(len == 2)
-        {
+            break;
+
+        case 2:
             value = ((uint16_t)*cur) << 8;
             ++cur; ++index;
 
             value |= (uint16_t)* cur;
             ++cur; ++index;
-        }
-        else
-        {
+            break;
+
+        default:
             retval = false;
         }
     }
@@ -273,21 +274,22 @@ bool dews::_internal_impls::dews_unpack_uint32(
     {
         int len = header & 0x0f;
         
-        if (len == 1)
+        switch(len)
         {
+        case 1:
             value = (uint32_t)*cur;
             ++cur; ++index;
-        }
-        else if(len == 2)
-        {
+            break;
+
+        case 2:
             value = ((uint32_t)*cur) << 8;
             ++cur; ++index;
 
             value |= (uint32_t)* cur;
             ++cur; ++index;
-        }
-        else if (len == 3)
-        {
+            break;
+
+        case 3:
             value = ((uint32_t)*cur) << 16;
             ++cur; ++index;
 
@@ -296,9 +298,9 @@ bool dews::_internal_impls::dews_unpack_uint32(
 
             value |= (uint32_t)*cur;
             ++cur; ++index;
-        }
-        else if (len == 4)
-        {
+            break;
+
+        case 4:
             value = ((uint32_t)*cur) << 24;
             ++cur; ++index;
 
@@ -310,9 +312,9 @@ bool dews::_internal_impls::dews_unpack_uint32(
 
             value |= (uint32_t)*cur;
             ++cur; ++index;
-        }
-        else
-        {
+            break;
+
+        default:
             retval = false;
         }
     }
@@ -352,21 +354,23 @@ bool dews::_internal_impls::dews_unpack_uint64(
     {
         int len = header & 0x0f;
         
-        if (len == 1)
+        switch (len)
         {
+
+        case 1:
             value = (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else if(len == 2)
-        {
+            break;
+
+        case 2:
             value = ((uint64_t)*cur) << 8;
             ++cur; ++index;
 
             value |= (uint64_t)* cur;
             ++cur; ++index;
-        }
-        else if (len == 3)
-        {
+            break;
+
+        case 3:
             value = ((uint64_t)*cur) << 16;
             ++cur; ++index;
 
@@ -375,9 +379,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
 
             value |= (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else if (len == 4)
-        {
+            break;
+
+        case 4:
             value = ((uint64_t)*cur) << 24;
             ++cur; ++index;
 
@@ -389,9 +393,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
 
             value |= (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else if (len == 5)
-        {
+            break;
+
+        case 5:
             value = ((uint64_t)*cur) << 32;
             ++cur; ++index;
 
@@ -406,9 +410,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
 
             value |= (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else if (len == 6)
-        {
+            break;
+
+        case 6:
             value = ((uint64_t)*cur) << 40;
             ++cur; ++index;
 
@@ -426,9 +430,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
 
             value |= (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else if (len == 7)
-        {
+            break;
+
+        case 7:
             value = ((uint64_t)*cur) << 48;
             ++cur; ++index;
 
@@ -449,9 +453,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
 
             value |= (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else if (len == 8)
-        {
+            break;
+
+        case 8:
             value = ((uint64_t)*cur) << 56;
             ++cur; ++index;
 
@@ -475,9 +479,9 @@ bool dews::_internal_impls::dews_unpack_uint64(
 
             value |= (uint64_t)*cur;
             ++cur; ++index;
-        }
-        else
-        {
+            break;
+
+        default:
             retval = false;
         }
     }
