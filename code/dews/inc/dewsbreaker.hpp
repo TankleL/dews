@@ -15,6 +15,7 @@ namespace dews
         
 
         bool unpack_int32(DEWS_OUT int32_t& value);
+        bool unpack_uint32(DEWS_OUT uint32_t& value);
 
     public:
         bool is_eod() const;

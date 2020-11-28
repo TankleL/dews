@@ -12,13 +12,14 @@ namespace dews
         DHT_Int64 = 0x40,
         DHT_UInt8 = 0x50,
         DHT_UInt16 = 0x60,
-        DHT_UInt64 = 0x70,
+        DHT_UInt32 = 0x70,
+        DHT_UInt64 = 0x80,
 
-        DHT_Float = 0x80,
-        DHT_Double = 0x90,
+        DHT_Float = 0x90,
+        DHT_Double = 0xa0,
 
-        DHT_Boolean = 0xa0,
-        DHT_Array = 0xb0,
+        DHT_Boolean = 0xb0,
+        DHT_Array = 0xc0,
 
         // <-------------- add new types here
 

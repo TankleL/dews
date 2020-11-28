@@ -5,6 +5,19 @@
 
 using namespace dews;
 
+namespace dews
+{
+    namespace _internal_impls
+    {
+        bool dews_unpack_uint32(
+            DEWS_OUT uint32_t& value,
+            DEWS_OUT size_t& read, 
+            DEWS_IN const Dews& dews,
+            DEWS_IN DewsHeaderTypes dht,
+            DEWS_IN size_t index);
+    }
+}
+
 DewsBreaker::DewsBreaker()
     : _index(0)
 {}
@@ -30,61 +43,82 @@ void DewsBreaker::getdews(DEWS_OUT Dews& dews)
  */
 bool DewsBreaker::unpack_int32(DEWS_OUT int32_t& value)
 {
-    bool retval = true;
-    const uint8_t* cur = _dews.data(_index);
-    uint8_t header = *cur;
-    ++cur;  ++_index;
+    size_t read = 0;
+    uint32_t ui32value = 0;
 
-    int dht = header & 0xf0;
-    if(dht == DHT_Int32)
+    bool retval = _internal_impls::dews_unpack_uint32(ui32value, read, _dews, DHT_Int32, _index);
+    value = zz_to_i32(ui32value);
+    _index += read;
+
+    return retval;
+}
+
+bool DewsBreaker::unpack_uint32(DEWS_OUT uint32_t& value)
+{
+    size_t read = 0;
+
+    bool retval = _internal_impls::dews_unpack_uint32(value, read, _dews, DHT_UInt32, _index);
+    _index += read;
+
+    return retval;
+}
+
+
+bool dews::_internal_impls::dews_unpack_uint32(
+    DEWS_OUT uint32_t& value,
+    DEWS_OUT size_t& read,
+    DEWS_IN const Dews& dews,
+    DEWS_IN DewsHeaderTypes dht,
+    DEWS_IN size_t index)
+{
+    bool retval = true;
+    const size_t origin_index = index;
+    const uint8_t* cur = dews.data(index);
+    uint8_t header = *cur;
+    ++cur;  ++index;
+
+    int thedht = header & 0xf0;
+    if(thedht == dht)
     {
         int len = header & 0x0f;
         
         if (len == 1)
         {
-            uint32_t bval = (uint32_t)*cur;
-            ++cur; ++_index;
-
-            value = zz_to_i32(bval);
+            value = (uint32_t)*cur;
+            ++cur; ++index;
         }
         else if(len == 2)
         {
-            uint32_t bval = ((uint32_t)*cur) << 8;
-            ++cur; ++_index;
+            value = ((uint32_t)*cur) << 8;
+            ++cur; ++index;
 
-            bval |= (uint32_t)* cur;
-            ++cur; ++_index;
-            
-            value = zz_to_i32(bval);
+            value |= (uint32_t)* cur;
+            ++cur; ++index;
         }
         else if (len == 3)
         {
-            uint32_t bval = ((uint32_t)*cur) << 16;
-            ++cur; ++_index;
+            value = ((uint32_t)*cur) << 16;
+            ++cur; ++index;
 
-            bval |= ((uint32_t)*cur) << 8;
-            ++cur; ++_index;
+            value |= ((uint32_t)*cur) << 8;
+            ++cur; ++index;
 
-            bval |= (uint32_t)*cur;
-            ++cur; ++_index;
-
-            value = zz_to_i32(bval);
+            value |= (uint32_t)*cur;
+            ++cur; ++index;
         }
         else if (len == 4)
         {
-            uint32_t bval = ((uint32_t)*cur) << 24;
-            ++cur; ++_index;
+            value = ((uint32_t)*cur) << 24;
+            ++cur; ++index;
 
-            bval |= ((uint32_t)*cur) << 16;
-            ++cur; ++_index;
+            value |= ((uint32_t)*cur) << 16;
+            ++cur; ++index;
 
-            bval |= ((uint32_t)*cur) << 8;
-            ++cur; ++_index;
+            value |= ((uint32_t)*cur) << 8;
+            ++cur; ++index;
 
-            bval |= (uint32_t)*cur;
-            ++cur; ++_index;
-
-            value = zz_to_i32(bval);
+            value |= (uint32_t)*cur;
+            ++cur; ++index;
         }
         else
         {
@@ -96,6 +130,7 @@ bool DewsBreaker::unpack_int32(DEWS_OUT int32_t& value)
         retval = false;
     }
 
+    read = index - origin_index;
     return retval;
 }
 

@@ -6,6 +6,14 @@
 
 using namespace dews;
 
+namespace dews
+{
+    namespace _internal_impls
+    {
+        void dews_pack_uint32(DEWS_REF Dews& dews, DEWS_IN uint32_t value, DEWS_IN DewsHeaderTypes dht);
+    }
+}
+
 DewsBuilder::DewsBuilder()
     : _pks(PKS_Idle)
 {}
@@ -24,39 +32,13 @@ DewsBuilder::~DewsBuilder()
  */
 DewsBuilder& DewsBuilder::pack_int32(DEWS_IN int32_t value)
 {
-    uint32_t zzed = i32_to_zz(value);
+    _internal_impls::dews_pack_uint32(_dews, i32_to_zz(value), DHT_Int32);
+    return *this;
+}
 
-    if (zzed < 0x100)
-    { // LEN == 1
-        uint8_t header = dews::DHT_Int32 | 0x01;
-        _dews.push(header);
-        _dews.push((uint8_t)zzed);
-    }
-    else if(zzed < 0x10000)
-    { // LEN == 2
-        uint8_t header = dews::DHT_Int32 | 0x02;
-        _dews.push(header);
-        _dews.push((uint8_t)(zzed >> 8));
-        _dews.push((uint8_t)(zzed & 0xff));
-    }
-    else if (zzed < 0x1000000)
-    { // LEN == 3
-        uint8_t header = dews::DHT_Int32 | 0x03;
-        _dews.push(header);
-        _dews.push((uint8_t) (zzed >> 16));
-        _dews.push((uint8_t)((zzed & 0xff00) >> 8));
-        _dews.push((uint8_t) (zzed & 0x00ff));
-    }
-    else
-    { // LEN == 4
-        uint8_t header = dews::DHT_Int32 | 0x04;
-        _dews.push(header);
-        _dews.push((uint8_t) (zzed >> 24));
-        _dews.push((uint8_t)((zzed & 0xff0000) >> 16));
-        _dews.push((uint8_t)((zzed & 0x00ff00) >> 8));
-        _dews.push((uint8_t) (zzed & 0x0000ff));
-    }
-
+DewsBuilder& DewsBuilder::pack_uint32(DEWS_IN uint32_t value)
+{
+    _internal_impls::dews_pack_uint32(_dews, value, DHT_UInt32);
     return *this;
 }
 
@@ -76,6 +58,43 @@ bool DewsBuilder::get_dews(DEWS_OUT Dews& dews)
     return retval;
 }
 
+/**********************************************************
+ Internal Implemetations
+ *********************************************************/
+
+void dews::_internal_impls::dews_pack_uint32(DEWS_REF Dews& dews, DEWS_IN uint32_t value, DEWS_IN DewsHeaderTypes dht)
+{
+    if (value < 0x100)
+    { // LEN == 1
+        uint8_t header = dht | 0x01;
+        dews.push(header);
+        dews.push((uint8_t)value);
+    }
+    else if(value < 0x10000)
+    { // LEN == 2
+        uint8_t header = dht | 0x02;
+        dews.push(header);
+        dews.push((uint8_t)(value >> 8));
+        dews.push((uint8_t)(value & 0xff));
+    }
+    else if (value < 0x1000000)
+    { // LEN == 3
+        uint8_t header = dht | 0x03;
+        dews.push(header);
+        dews.push((uint8_t) (value >> 16));
+        dews.push((uint8_t)((value & 0xff00) >> 8));
+        dews.push((uint8_t) (value & 0x00ff));
+    }
+    else
+    { // LEN == 4
+        uint8_t header = dht | 0x04;
+        dews.push(header);
+        dews.push((uint8_t) (value >> 24));
+        dews.push((uint8_t)((value & 0xff0000) >> 16));
+        dews.push((uint8_t)((value & 0x00ff00) >> 8));
+        dews.push((uint8_t) (value & 0x0000ff));
+    }
+}
 
 
 

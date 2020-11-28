@@ -18,6 +18,7 @@
 
 #define   DEWS_IN
 #define   DEWS_OUT
+#define   DEWS_REF
 
 #define   DEWS_HIDDEN_TYPE  void*
 

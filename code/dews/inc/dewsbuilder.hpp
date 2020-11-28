@@ -20,6 +20,7 @@ namespace dews
 
     public:
         DewsBuilder& pack_int32(DEWS_IN int32_t value);
+        DewsBuilder& pack_uint32(DEWS_IN uint32_t value);
         DewsBuilder& pack_array_begin();
         DewsBuilder& pack_array_end();
 
