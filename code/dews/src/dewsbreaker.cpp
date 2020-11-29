@@ -43,6 +43,11 @@ DewsBreaker::DewsBreaker()
     : _index(0)
 {}
 
+DewsBreaker::DewsBreaker(DEWS_REF Dews&& dews)
+    : _index(0)
+    , _dews(std::move(dews))
+{}
+
 void DewsBreaker::setdews(DEWS_IN Dews&& dews)
 {
     _dews = std::move(dews);

@@ -21,6 +21,11 @@ DewsBuilder::DewsBuilder()
     : _pks(PKS_Idle)
 {}
 
+DewsBuilder::DewsBuilder(Dews&& dews)
+    : _pks(PKS_Idle)
+    , _dews(std::move(dews))
+{}
+
 DewsBuilder::~DewsBuilder()
 {}
 
@@ -125,6 +130,11 @@ bool DewsBuilder::getdews(DEWS_OUT Dews& dews)
     }
 
     return retval;
+}
+
+void DewsBuilder::setdews(DEWS_REF Dews&& dews)
+{
+    _dews = std::move(dews);
 }
 
 /**********************************************************

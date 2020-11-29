@@ -16,6 +16,7 @@ namespace dews
 
     public:
         DewsBuilder();
+        DewsBuilder(Dews&& dews);
         ~DewsBuilder();
 
     public:
@@ -31,6 +32,7 @@ namespace dews
 
         DewsBuilder& pack_string(DEWS_IN const std::string& value);
 
+        void setdews(DEWS_REF Dews&& dews);
         bool getdews(DEWS_OUT Dews& dews);
 
     private:

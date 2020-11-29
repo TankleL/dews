@@ -15,6 +15,8 @@ void test_uint64_encode_decode();
 
 void test_string_encode_decode();
 
+void test_dews_apis();
+
 int main(int argc, char** argv)
 {
     test_int8_encode_decode();
@@ -28,6 +30,8 @@ int main(int argc, char** argv)
     test_uint64_encode_decode();
 
     test_string_encode_decode();
+
+    test_dews_apis();
 
     return 0;
 }
@@ -458,5 +462,32 @@ void test_string_encode_decode()
     assert(value == "Before me there's just an empty string get packed.");
 }
 
+void test_dews_apis()
+{
+    Dews dews1;
+
+    DewsBuilder db(std::move(dews1));
+    db.pack_int32(-10);
+
+    Dews dews2;
+    db.getdews(dews2);
+
+    db.setdews(std::move(dews2));
+    db.pack_string("hello");
+
+    Dews dews3;
+    db.getdews(dews3);
+
+
+    DewsBreaker dr(std::move(dews3));
+
+    int32_t i32val;
+    assert(dr.unpack_int32(i32val));
+    assert(i32val == -10);
+
+    std::string strval;
+    assert(dr.unpack_string(strval));
+    assert(strval == "hello");
+}
 
 

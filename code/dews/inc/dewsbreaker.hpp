@@ -8,6 +8,7 @@ namespace dews
     {
     public:
         DewsBreaker();
+        DewsBreaker(DEWS_REF Dews&& dews);
 
     public:
         void setdews(DEWS_IN Dews&& dews);
