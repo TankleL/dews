@@ -89,7 +89,7 @@ DewsBuilder& DewsBuilder::pack_uint64(DEWS_IN uint64_t value)
            ----------------- ---------------------- ------------- -------------     -------------
            |  Pack  Header | |  LEN : Dew-UInt32  | |   Char1   | |   Char2   |     |   CharN   |
  LEN >=15  | 0 ~ 3 | 4 ~ 7 | |     0 ~ Variable   | |   0 ~ 7   | |   0 ~ 7   | ... |   0 ~ 7   |
-           |  DHT  |  LEN  | |        VAL         | |    VAL    | |    VAL    |     |    VAL    |
+           |  DHT  |   0   | |        VAL         | |    VAL    | |    VAL    |     |    VAL    |
            ----------------- ---------------------- ------------- -------------     -------------
  */
 DewsBuilder& DewsBuilder::pack_string(DEWS_IN const std::string& value)
@@ -112,6 +112,43 @@ DewsBuilder& DewsBuilder::pack_string(DEWS_IN const std::string& value)
     { // len == 0
         _dews.push(DHT_String); // DHT_String | 0x00
     }
+
+    return *this;
+}
+
+/**
+ put an array into buffer
+ dew format:
+ ------------------- ---------------------- ------------- -------------     -------------
+ |  Pack  Header   | |  LEN : Dew-UInt32  | |   UI8 1   | |   UI8 2   |     |   UI8 N   |
+ | 0 ~ 3 |  4 ~ 7  | |     0 ~ Variable   | |   0 ~ 7   | |   0 ~ 7   | ... |   0 ~ 7   |
+ |  0xf0 |  DHTE   | |        VAL         | |    VAL    | |    VAL    |     |    VAL    |
+ ------------------- ---------------------- ------------- -------------     -------------
+ */
+DewsBuilder& DewsBuilder::pack_uint8_array(DEWS_IN const uint8_t* arr, DEWS_IN size_t length)
+{
+    assert(length <= std::numeric_limits<uint32_t>::max());
+    
+    _dews.push(DHT_Extended | DHTE_UInt8_Array);
+    pack_uint32((uint32_t)length);
+    _dews.push(arr, arr + length);
+
+    return *this;
+}
+
+/**
+ put a dews object into buffer
+ dew format:
+ ----------------- -------------------
+ |  Pack  Header | |   UInt8 Array   |
+ | 0 ~ 3 | 4 ~ 7 | |   0 ~ Variable  |
+ |  DHT  |   0   | |     PAYLOAD     |
+ ----------------- -------------------
+ */
+DewsBuilder& DewsBuilder::pack_dews(DEWS_IN const Dews& dews)
+{
+    _dews.push(DHT_Dews);  // pack header
+    pack_uint8_array(dews.data(), dews.length());
 
     return *this;
 }

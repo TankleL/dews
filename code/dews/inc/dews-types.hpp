@@ -20,10 +20,17 @@ namespace dews
 
         DHT_Boolean = 0xb0,
         DHT_String = 0xc0,
+        DHT_Dews = 0xd0,
 
-        // <-------------- add new types here
-
+        DHT_Unknown = 0xe0,
         DHT_Extended = 0xf0
+    };
+
+    enum DewsHeaderTypesExtended : uint8_t
+    {
+        DHTE_UInt8_Array = 0x01,
+
+        DHTE_Extended = 0x0f
     };
 
     enum DewsBooleanValue : uint8_t

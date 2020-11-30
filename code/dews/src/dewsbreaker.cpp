@@ -50,12 +50,14 @@ DewsBreaker::DewsBreaker(DEWS_REF Dews&& dews)
 
 void DewsBreaker::setdews(DEWS_IN Dews&& dews)
 {
+    _index = 0;
     _dews = std::move(dews);
 }
 
 void DewsBreaker::getdews(DEWS_OUT Dews& dews)
 {
-    dews = std::move(_dews);
+    _index = 0;
+    _dews.flushto(dews);
 }
 
 bool DewsBreaker::is_eod() const
@@ -205,6 +207,86 @@ bool DewsBreaker::unpack_string(DEWS_OUT std::string& value)
         else
         { // len == 0
             value.clear();
+        }
+    }
+    else
+    {
+        retval = false;
+    }
+
+    return retval;
+}
+
+
+bool DewsBreaker::unpack_uint8_array(DEWS_OUT uint8_t* dst, DEWS_IN size_t length)
+{
+    assert(length <= std::numeric_limits<uint32_t>::max());
+    bool retval = true;
+
+    const uint8_t* cur = _dews.data(_index);
+    uint8_t header = *cur;
+    ++cur;  ++_index;
+
+    if (header == (DHT_Extended | DHTE_UInt8_Array))
+    {
+        uint32_t len;
+        retval = unpack_uint32(len);
+
+        if (retval && len == (uint32_t)length)
+        {
+            memcpy(dst, _dews.data(_index), length);
+            _index += length;
+        }
+    }
+    else
+    {
+        retval = false;
+    }
+
+    return retval;
+}
+
+bool DewsBreaker::uint8_array_length(DEWS_OUT size_t& length) const
+{
+    bool retval = true;
+    uint8_t header = *_dews.data(_index);
+
+    if (header == (DHT_Extended | DHTE_UInt8_Array))
+    {
+        uint32_t len;
+        size_t read;
+        retval = _internal_impls::dews_unpack_uint32(len, read, _dews, DHT_UInt32, _index + 1);
+
+        if (retval)
+        {
+            length = len;
+        }
+    }
+    else
+    {
+        retval = false;
+    }
+   
+    return retval;
+}
+
+bool DewsBreaker::unpack_dews(DEWS_OUT Dews& value)
+{
+    bool retval = true;
+
+    const uint8_t* cur = _dews.data(_index);
+    uint8_t header = *cur;
+    ++cur;  ++_index;
+
+    if (header == DHT_Dews)
+    {
+        size_t reallen;
+        retval = uint8_array_length(reallen);
+
+        if (retval)
+        {
+            value.resize(reallen);
+            retval = unpack_uint8_array(value.data(), reallen);
         }
     }
     else

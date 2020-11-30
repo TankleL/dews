@@ -31,6 +31,10 @@ Dews::Dews(std::vector<uint8_t>&& rhs) noexcept
     : _buffer(new std::vector<uint8_t>(std::move(rhs)))
 {}
 
+Dews::Dews(size_t length)
+    : _buffer(new std::vector<uint8_t>(length))
+{}
+
 Dews::~Dews()
 {
     delete _buffer;
@@ -78,6 +82,17 @@ const uint8_t* Dews::data(size_t index) const
     return mybuf.data() + index;
 }
 
+uint8_t* Dews::data()
+{
+    std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
+    return mybuf.data();
+}
+
+uint8_t* Dews::data(size_t index)
+{
+    std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
+    return mybuf.data() + index;
+}
 const size_t Dews::length() const
 {
     std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
@@ -88,6 +103,12 @@ void Dews::reset()
 {
     delete _buffer;
     _buffer = new std::vector<uint8_t>;
+}
+
+void Dews::resize(size_t length)
+{
+    std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
+    mybuf.resize(length);
 }
 
 void Dews::acquire(Dews& source)

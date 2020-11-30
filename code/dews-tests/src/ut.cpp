@@ -15,6 +15,10 @@ void test_uint64_encode_decode();
 
 void test_string_encode_decode();
 
+void test_uint8_array_encode_decode();
+
+void test_dews_encode_decode();
+
 void test_dews_apis();
 
 int main(int argc, char** argv)
@@ -30,6 +34,10 @@ int main(int argc, char** argv)
     test_uint64_encode_decode();
 
     test_string_encode_decode();
+
+    test_uint8_array_encode_decode();
+
+    test_dews_encode_decode();
 
     test_dews_apis();
 
@@ -460,6 +468,50 @@ void test_string_encode_decode()
 
     assert(dr.unpack_string(value));
     assert(value == "Before me there's just an empty string get packed.");
+}
+
+void test_uint8_array_encode_decode()
+{
+    uint8_t origin_arr[3] = { 3, 1, 2 };
+    DewsBuilder db;
+
+    db.pack_uint8_array(origin_arr, 3);
+
+    Dews ds; db.getdews(ds);
+    DewsBreaker dr(std::move(ds));
+
+    uint8_t* decoded_arry = new uint8_t[3];
+    size_t arr_len;
+    assert(dr.uint8_array_length(arr_len));
+    assert(arr_len == 3);
+    assert(dr.unpack_uint8_array(decoded_arry, 3));
+    assert(decoded_arry[0] == 3 && decoded_arry[1] == 1 && decoded_arry[2] == 2);
+}
+
+void test_dews_encode_decode()
+{
+    DewsBuilder db;
+    db.pack_int32(-1234567);
+    db.pack_string("Hi Dews");
+
+    Dews dsinside; db.getdews(dsinside);
+    db.pack_dews(dsinside);
+
+    Dews ds; db.getdews(ds);
+    DewsBreaker dr(std::move(ds));
+
+    Dews dstarget;
+    assert(dr.unpack_dews(dstarget));
+
+    dr.setdews(std::move(dstarget));
+
+    int32_t i32val;
+    assert(dr.unpack_int32(i32val));
+    assert(i32val == -1234567);
+
+    std::string strval;
+    assert(dr.unpack_string(strval));
+    assert(strval == "Hi Dews");
 }
 
 void test_dews_apis()

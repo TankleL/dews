@@ -32,6 +32,10 @@ namespace dews
 
         DewsBuilder& pack_string(DEWS_IN const std::string& value);
 
+        DewsBuilder& pack_uint8_array(DEWS_IN const uint8_t* arr, DEWS_IN size_t length);
+
+        DewsBuilder& pack_dews(DEWS_IN const Dews& dews);
+
         void setdews(DEWS_REF Dews&& dews);
         bool getdews(DEWS_OUT Dews& dews);
 
