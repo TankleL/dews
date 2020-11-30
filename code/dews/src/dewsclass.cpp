@@ -27,6 +27,10 @@ Dews::Dews(Dews&& rhs) noexcept
     rhs._buffer = nullptr;
 }
 
+Dews::Dews(std::vector<uint8_t>&& rhs) noexcept
+    : _buffer(new std::vector<uint8_t>(std::move(rhs)))
+{}
+
 Dews::~Dews()
 {
     delete _buffer;
@@ -95,6 +99,13 @@ void Dews::acquire(Dews& source)
 void Dews::flushto(Dews& dest)
 {
     dest.acquire(*this);
+    reset();
+}
+
+void Dews::flushto(std::vector<uint8_t>& dest)
+{
+    std::vector<uint8_t>& mybuf = *static_cast<std::vector<uint8_t>*>(_buffer);
+    dest = std::move(mybuf);
     reset();
 }
 

@@ -9,6 +9,7 @@ namespace dews
         Dews();
         Dews(const Dews& rhs);
         Dews(Dews&& rhs) noexcept;
+        Dews(std::vector<uint8_t>&& rhs) noexcept;
         ~Dews();
 
     public:
@@ -26,6 +27,7 @@ namespace dews
         void reset();
         void acquire(Dews& source);
         void flushto(Dews& dest);
+        void flushto(std::vector<uint8_t>& dest);
 
     private:
         DEWS_HIDDEN_TYPE _buffer;
